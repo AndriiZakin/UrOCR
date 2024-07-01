@@ -1,0 +1,1 @@
+from .Process_image import create_ocr_gui

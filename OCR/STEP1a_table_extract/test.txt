@@ -1,0 +1,76 @@
+import os
+import cv2
+
+def gaussian_blur(image, kernel_size=(17, 17), sigmaX=0, sigmaY=0):
+    return cv2.GaussianBlur(image, kernel_size, sigmaX, sigmaY)
+
+def adaptive_threshold(image, max_val=255, block_size=15, subtract_from_mean=-2):
+    return cv2.adaptiveThreshold(~image, max_val, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, block_size, subtract_from_mean)
+
+def apply_morphology(image, scale=5):
+    image_width, image_height = image.shape
+    horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (int(image_width / scale), 1))
+    vertical_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, int(image_height / scale)))
+    horizontally_opened = cv2.morphologyEx(image, cv2.MORPH_OPEN, horizontal_kernel)
+    vertically_opened = cv2.morphologyEx(image, cv2.MORPH_OPEN, vertical_kernel)
+    return horizontally_opened, vertically_opened
+
+def dilate_images(horizontally_opened, vertically_opened):
+    horizontally_dilated = cv2.dilate(horizontally_opened, cv2.getStructuringElement(cv2.MORPH_RECT, (40, 1)))
+    vertically_dilated = cv2.dilate(vertically_opened, cv2.getStructuringElement(cv2.MORPH_RECT, (1, 60)))
+    return horizontally_dilated, vertically_dilated
+
+def find_intersections(horizontally_dilated, vertically_dilated):
+    intersections = cv2.bitwise_and(horizontally_dilated, vertically_dilated)
+    return intersections
+
+def count_intersections_in_rects(intersections, bounding_rects):
+    intersection_counts = []
+    for rect in bounding_rects:
+        x, y, w, h = rect
+        cropped = intersections[y:y+h, x:x+w]
+        count = cv2.countNonZero(cropped)
+        intersection_counts.append(count)
+    return intersection_counts
+
+def find_tables(image):
+    blurred = gaussian_blur(image)
+    img_bin = adaptive_threshold(blurred)
+    horizontally_opened, vertically_opened = apply_morphology(img_bin)
+    horizontally_dilated, vertically_dilated = dilate_images(horizontally_opened, vertically_opened)
+    
+    mask = horizontally_dilated + vertically_dilated
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    
+    MIN_TABLE_AREA = 1e5
+    contours = [c for c in contours if cv2.contourArea(c) > MIN_TABLE_AREA]
+    approx_polys = [cv2.approxPolyDP(c, 0.1 * cv2.arcLength(c, True), True) for c in contours]
+    bounding_rects = [cv2.boundingRect(a) for a in approx_polys]
+    
+    intersections = find_intersections(horizontally_dilated, vertically_dilated)
+    intersection_counts = count_intersections_in_rects(intersections, bounding_rects)
+    
+    MIN_INTERSECTIONS = 10
+    filtered_rects = [rect for rect, count in zip(bounding_rects, intersection_counts) if count > MIN_INTERSECTIONS]
+    
+    images = [image[y:y+h, x:x+w] for x, y, w, h in filtered_rects]
+    return images
+
+def main(files):
+    results = []
+    for f in files:
+        directory, filename = os.path.split(f)
+        image = cv2.imread(f, cv2.IMREAD_GRAYSCALE)
+        tables = find_tables(image)
+        files = []
+        filename_sans_extension = os.path.splitext(filename)[0]
+        if tables:
+            os.makedirs(os.path.join(directory, filename_sans_extension), exist_ok=True)
+        for i, table in enumerate(tables):
+            table_filename = f"table-{i:03d}.png"
+            table_filepath = os.path.join(directory, filename_sans_extension, table_filename)
+            files.append(table_filepath)
+            cv2.imwrite(table_filepath, table)
+        if tables:
+            results.append((f, files))
+    return results
