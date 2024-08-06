@@ -1,1 +1,1 @@
-from .main import main
+from .OCR_main import main

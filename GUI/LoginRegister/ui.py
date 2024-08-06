@@ -1,7 +1,9 @@
 import tkinter as tk
 from tkinter import messagebox, Toplevel, Label
 import re
-from db_manager import DBManager
+from .db_manager import DBManager
+from  GUI.Process_image import create_ocr_gui
+from OCR.OCR_main import main
 
 class ToolTip(object):
     def __init__(self, widget):
@@ -49,34 +51,34 @@ class TkinterGUI:
 
     # Adjusted setup_ui method within TkinterGUI class
     def setup_ui(self):
-        self.root.title("Login or Register")
+        self.root.title("UrOCR")
         self.root.geometry("500x400")
     
         self.top_frame = tk.Frame(self.root)
-        self.top_frame.pack(pady=10)
+        self.top_frame.place(relx=0.5, rely=0.3, anchor=tk.CENTER)
     
         self.middle_frame = tk.Frame(self.root)
-        self.middle_frame.pack(pady=5)
+        self.middle_frame.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
     
         self.bottom_frame = tk.Frame(self.root)
-        self.bottom_frame.pack(pady=10)
+        self.bottom_frame.place(relx=0.5, rely=0.7, anchor=tk.CENTER)
     
         self.username_label = tk.Label(self.top_frame, text="Username:")
-        self.username_label.pack(side=tk.LEFT)
+        self.username_label.pack(side=tk.LEFT, padx=5)
         self.username_entry = tk.Entry(self.top_frame)
-        self.username_entry.pack(side=tk.RIGHT)
+        self.username_entry.pack(side=tk.LEFT, padx=5)
     
         self.password_label = tk.Label(self.middle_frame, text="Password:")
-        self.password_label.pack(side=tk.LEFT)
+        self.password_label.pack(side=tk.LEFT, padx=5)
     
         # Password requirements button - now positioned to the left of the password entry
         self.password_req_button = tk.Button(self.middle_frame, text="?")
-        self.password_req_button.pack(side=tk.LEFT, padx=(0,5))
+        self.password_req_button.pack(side=tk.LEFT, padx=(0, 5))
         password_requirements = "Password must be at least 8 characters long, include uppercase and lowercase letters, at least one digit, and one special character."
         create_tooltip(self.password_req_button, password_requirements)
-            
+    
         self.password_entry = tk.Entry(self.middle_frame, show="*")
-        self.password_entry.pack(side=tk.LEFT)
+        self.password_entry.pack(side=tk.LEFT, padx=5)
     
         self.register_button = tk.Button(self.bottom_frame, text="Register", command=self.register)
         self.register_button.pack(side=tk.LEFT, padx=5)
@@ -84,10 +86,10 @@ class TkinterGUI:
         self.login_button.pack(side=tk.RIGHT, padx=5)
     
         self.help_button = tk.Button(self.root, text="Help", command=self.show_help)
-        self.help_button.pack(side=tk.BOTTOM, pady=5)
+        self.help_button.place(relx=0.5, rely=0.9, anchor=tk.CENTER)
     
         self.guest_login_button = tk.Button(self.root, text="Login as Guest", command=self.login_as_guest)
-        self.guest_login_button.pack(side=tk.BOTTOM)
+        self.guest_login_button.place(relx=0.5, rely=0.95, anchor=tk.CENTER)
 
     def register(self):
         username = self.username_entry.get()
@@ -143,7 +145,8 @@ class TkinterGUI:
 
     def login_as_guest(self):
         messagebox.showwarning("Warning", "You are logging in as a guest. Your data won't be saved.")
-        # Implement the logic for guest login
+        create_ocr_gui(main)
+        self.root.destroy()
 
 if __name__ == "__main__":
     root = tk.Tk()

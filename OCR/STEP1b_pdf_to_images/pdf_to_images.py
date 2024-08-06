@@ -3,7 +3,7 @@ import re
 import subprocess
 from PIL import Image
 from contextlib import contextmanager
-from util import get_logger
+from OCR.util import get_logger
 
 logger = get_logger(__name__)
 

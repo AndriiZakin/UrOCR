@@ -1,5 +1,5 @@
 import tkinter as tk
-from ui import TkinterGUI
+from GUI.LoginRegister.ui import TkinterGUI
 
 '''1. make login more beautifull
    2. creare a help button

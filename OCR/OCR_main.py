@@ -1,13 +1,13 @@
 import os
 import sys
 
-from STEP1a_table_extract import extract_tables
-from STEP1b_pdf_to_images import pdf_to_images
-from STEP2_cell_extract import extract_cells
-from STEP3_image_ocr import ocr_images
-from STEP4_orc_to_format import ocr_to_csv
+from OCR.STEP1a_table_extract import extract_tables
+from OCR.STEP1b_pdf_to_images import pdf_to_images
+from OCR.STEP2_cell_extract import extract_cells
+from OCR.STEP3_image_ocr import ocr_images
+from OCR.STEP4_orc_to_format import ocr_to_csv
 
-from GUI import create_ocr_gui
+#from GUI import create_ocr_gui
 
 def if_pdf(filepath):
     _, file_extension = os.path.splitext(filepath)
@@ -33,9 +33,8 @@ def process_image(filepath):
                     print(f"{c}: {text}")
             if len(cells) > 3:
                 print("...")
-            # Assuming ocr_to_csv.main returns the path to the generated CSV file
             csv_file = ocr_to_csv.main(ocr, 'XLSX')
-            print(f"Generated CSV file: {csv_file}")
+            #print(f"Generated CSV file: {csv_file}")
             return csv_file
 
 def main(filepath):
