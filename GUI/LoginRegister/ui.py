@@ -49,7 +49,6 @@ class TkinterGUI:
         self.root = root
         self.setup_ui()
 
-    # Adjusted setup_ui method within TkinterGUI class
     def setup_ui(self):
         self.root.title("UrOCR")
         self.root.geometry("500x400")
@@ -71,7 +70,6 @@ class TkinterGUI:
         self.password_label = tk.Label(self.middle_frame, text="Password:")
         self.password_label.pack(side=tk.LEFT, padx=5)
     
-        # Password requirements button - now positioned to the left of the password entry
         self.password_req_button = tk.Button(self.middle_frame, text="?")
         self.password_req_button.pack(side=tk.LEFT, padx=(0, 5))
         password_requirements = "Password must be at least 8 characters long, include uppercase and lowercase letters, at least one digit, and one special character."

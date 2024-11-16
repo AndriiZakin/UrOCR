@@ -41,11 +41,6 @@ def find_tables(image):
     approx_polys = [cv2.approxPolyDP(c, e, True) for c, e in zip(contours, epsilons)]
     bounding_rects = [cv2.boundingRect(a) for a in approx_polys]
 
-    # The link where a lot of this code was borrowed from recommends an
-    # additional step to check the number of "joints" inside this bounding rectangle.
-    # A table should have a lot of intersections. We might have a rectangular image
-    # here though which would only have 4 intersections, 1 at each corner.
-    # Leaving that step as a future TODO if it is ever necessary.
     images = [image[y:y+h, x:x+w] for x, y, w, h in bounding_rects]
     return images
 
