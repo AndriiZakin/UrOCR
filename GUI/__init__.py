@@ -1,1 +1,1 @@
-from .Process_image import create_ocr_gui
+from .mainpage_GUI import create_ocr_gui

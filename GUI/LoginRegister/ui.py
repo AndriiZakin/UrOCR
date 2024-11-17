@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox, Toplevel, Label
 import re
 from .db_manager import DBManager
-from  GUI.Process_image import create_ocr_gui
+from GUI.mainpage_GUI import create_ocr_gui
 from OCR.OCR_main import main
 
 class ToolTip(object):

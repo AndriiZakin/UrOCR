@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import filedialog, Toplevel, Label, StringVar, OptionMenu, messagebox
 from tkinter.scrolledtext import ScrolledText
+from stats_calc import statistics_summary, histogram_drawing, goodness_of_fit, calculate_correlation
+
 
 directory = r'C:\Users\AndrZ\Desktop\Comp.SienceProject\UrOCR\OCR\results'
 
@@ -32,6 +34,22 @@ def create_ocr_gui(process_image_callback):
             "The types of files accepted include common image formats such as JPEG, PNG, BMP, and TIFF."
         )
         messagebox.showinfo("Help", help_text)
+
+    def show_statistics_summary():
+        pass
+
+    def generate_histogram():
+        pass
+
+    def find_correlations():
+        filepath = file_path_entry.get()
+        if not filepath:
+            output_text.insert(tk.END, "Please select a file to find correlations.\n")
+            return
+        try:
+            calculate_correlation(filepath)
+        except Exception as e:
+            output_text.insert(tk.END, str(e))
 
     root = tk.Tk()
     root.title("Image OCR")
@@ -66,15 +84,15 @@ def create_ocr_gui(process_image_callback):
 
     # Create a menu
     menu = tk.Menu(root, tearoff=0)
-    menu.add_command(label="Show Summary Statistics")
-    menu.add_command(label="Generate Histogram")
-    menu.add_command(label="Find Correlations")
+    menu.add_command(label="Show Summary Statistics", command=show_statistics_summary)
+    menu.add_command(label="Generate Histogram", command=generate_histogram)
+    menu.add_command(label="Find Correlations", command=find_correlations)
     menu.add_command(label="Change the format")
     menu.add_command(label="Settings")
     menu.add_command(label="Instructions/Manual")
     menu.add_command(label="Save and Exit", command=root.destroy)
 
-    # Create a button that looks like three short lines
+    # Create a button to display the menu
     dropdown_button = tk.Button(root, text="≡", font=("Arial", 14), command=lambda: menu.post(dropdown_button.winfo_rootx(), dropdown_button.winfo_rooty() + dropdown_button.winfo_height()))
     dropdown_button.grid(row=0, column=2, padx=10, pady=5, sticky="e")
 
