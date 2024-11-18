@@ -1,8 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, Toplevel, Label, StringVar, OptionMenu, messagebox
 from tkinter.scrolledtext import ScrolledText
-from stats_calc import statistics_summary, histogram_drawing, goodness_of_fit, calculate_correlation
-
+from menu_functions import statistics_summary, histogram_drawing, goodness_of_fit, calculate_correlation, change_file_format_gui, show_settings, show_manual
 
 directory = r'C:\Users\AndrZ\Desktop\Comp.SienceProject\UrOCR\OCR\results'
 
@@ -19,7 +18,7 @@ def create_ocr_gui(process_image_callback):
             output_text.insert(tk.END, "Please select an image file.\n")
             return
         
-        output_text.insert(tk.END, "Please wait while your file is processed, this may take some time.")
+        output_text.insert(tk.END, "Please wait while your file is processing, this may take some time.")
         root.update()
 
         process_image_callback(filepath)
@@ -36,10 +35,24 @@ def create_ocr_gui(process_image_callback):
         messagebox.showinfo("Help", help_text)
 
     def show_statistics_summary():
-        pass
+        filepath = file_path_entry.get()
+        if not filepath:
+            output_text.insert(tk.END, "Please select a file to show statistics summary.\n")
+            return
+        try:
+            statistics_summary(filepath)
+        except Exception as e:
+            output_text.insert(tk.END, str(e))
 
     def generate_histogram():
-        pass
+        filepath = file_path_entry.get()
+        if not filepath:
+            output_text.insert(tk.END, "Please select a file to generate a histogram.\n")
+            return
+        try:
+            histogram_drawing(filepath)
+        except Exception as e:
+            output_text.insert(tk.END, str(e))            
 
     def find_correlations():
         filepath = file_path_entry.get()
@@ -48,6 +61,16 @@ def create_ocr_gui(process_image_callback):
             return
         try:
             calculate_correlation(filepath)
+        except Exception as e:
+            output_text.insert(tk.END, str(e))
+        
+    def change_file_format():
+        filepath = file_path_entry.get()
+        if not filepath:
+            output_text.insert(tk.END, "Please select a file to change file format.\n")
+            return
+        try:
+            change_file_format_gui(filepath)
         except Exception as e:
             output_text.insert(tk.END, str(e))
 
@@ -77,19 +100,19 @@ def create_ocr_gui(process_image_callback):
     select_file_button.grid(row=2, column=2, padx=10, pady=5, sticky="ew")
 
     process_button = tk.Button(root, text="Process File", command=on_process_image, width=15)
-    process_button.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
+    process_button.grid(row=4, column=1, padx=10, pady=5, sticky="ew")
 
     output_text = ScrolledText(root, width=70, height=20)
-    output_text.grid(row=4, column=0, columnspan=3, padx=10, pady=5, sticky="nsew")
+    output_text.grid(row=5, column=0, columnspan=3, padx=10, pady=5, sticky="nsew")
 
     # Create a menu
     menu = tk.Menu(root, tearoff=0)
     menu.add_command(label="Show Summary Statistics", command=show_statistics_summary)
     menu.add_command(label="Generate Histogram", command=generate_histogram)
     menu.add_command(label="Find Correlations", command=find_correlations)
-    menu.add_command(label="Change the format")
-    menu.add_command(label="Settings")
-    menu.add_command(label="Instructions/Manual")
+    menu.add_command(label="Change the file format", command=change_file_format)
+    menu.add_command(label="Settings", command=show_settings)
+    menu.add_command(label="Instructions/Manual", command=show_manual)
     menu.add_command(label="Save and Exit", command=root.destroy)
 
     # Create a button to display the menu
