@@ -1,11 +1,11 @@
 import os
 import sys
 
-from OCR.STEP1a_table_extract import extract_tables
-from OCR.STEP1b_pdf_to_images import pdf_to_images
-from OCR.STEP2_cell_extract import extract_cells
-from OCR.STEP3_image_ocr import ocr_images
-from OCR.STEP4_orc_to_format import ocr_to_csv
+from OCR.Table_Extract import extract_tables
+from OCR.Pdf_to_Images import pdf_to_images
+from OCR.Cell_Extract import extract_cells
+from OCR.Image_OCR import ocr_images
+from OCR.OCR_to_Format import ocr_to_csv
 
 #from GUI import create_ocr_gui
 
@@ -13,7 +13,7 @@ def if_pdf(filepath):
     _, file_extension = os.path.splitext(filepath)
     return file_extension.lower() == '.pdf'
 
-def process_image(filepath):
+def process_image(filepath, save_path, format_file):
     image_tables = extract_tables.main([filepath])
     print(f"Running `extract_tables.main([{filepath}]).`")
     print("Extracted the following tables from the image:")
@@ -33,17 +33,17 @@ def process_image(filepath):
                     print(f"{c}: {text}")
             if len(cells) > 3:
                 print("...")
-            csv_file = ocr_to_csv.main(ocr, 'XLSX')
+            csv_file = ocr_to_csv.main(ocr, save_path, format_file)
             #print(f"Generated CSV file: {csv_file}")
             return csv_file
 
-def main(filepath):
+def main(filepath, save_path, format_file):
     if if_pdf(filepath):
         images_filenames = pdf_to_images(filepath)
         for image in images_filenames:
-            process_image(image)
+            process_image(image, save_path, format_file)
     else:
-        process_image(filepath)
+        process_image(filepath, save_path, format_file)
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:

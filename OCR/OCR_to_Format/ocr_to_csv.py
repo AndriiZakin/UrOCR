@@ -4,8 +4,7 @@ from io import BytesIO
 import os
 from openpyxl import Workbook # type: ignore
 
-
-def text_files_to_XLSX(files, output_filename="results/output.xlsx"):
+def text_files_to_XLSX(files, output_filename):
     wb = Workbook()
     ws = wb.active
 
@@ -17,6 +16,7 @@ def text_files_to_XLSX(files, output_filename="results/output.xlsx"):
         # Openpyxl uses 1-based indexing, so we adjust row and column
         ws.cell(row=row + 1, column=column + 1, value=txt)
 
+    # Ensure the output directory exists
     os.makedirs(os.path.dirname(output_filename), exist_ok=True)
     wb.save(output_filename)
     virtual_workbook = BytesIO()
@@ -24,9 +24,8 @@ def text_files_to_XLSX(files, output_filename="results/output.xlsx"):
     virtual_workbook.seek(0)  
 
     return virtual_workbook.getvalue()
-    
 
-def text_files_to_csv(files, output_filename="results/output.csv"):
+def text_files_to_csv(files, output_filename):
     """Files must be sorted lexicographically
     Filenames must be <row>-<column>.txt.
     000-000.txt
@@ -50,7 +49,7 @@ def text_files_to_csv(files, output_filename="results/output.csv"):
         for i in range(len(row)):
             row[i] = row[i][1]
 
-    # Ensure the results directory exists
+    # Ensure the output directory exists
     os.makedirs(os.path.dirname(output_filename), exist_ok=True)
 
     # Write the CSV file and save it
@@ -65,8 +64,8 @@ def text_files_to_csv(files, output_filename="results/output.csv"):
     csv_content.seek(0)  # Rewind the StringIO object to the beginning
     return csv_content.getvalue()
 
-def main(files, format):
-    if format == 'CSV':
-        return text_files_to_csv(files)
+def main(files, save_path, format_file):
+    if format_file == 'CSV':
+        return text_files_to_csv(files, save_path)
     else:
-        return text_files_to_XLSX(files)
+        return text_files_to_XLSX(files, save_path)

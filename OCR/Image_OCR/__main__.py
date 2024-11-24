@@ -1,6 +1,6 @@
 import argparse
 
-from STEP3_image_ocr import main
+from Image_OCR import main
 
 description="""Takes a single argument that is the image to OCR.
 Remaining arguments are passed directly to Tesseract.

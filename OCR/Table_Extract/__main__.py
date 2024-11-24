@@ -1,5 +1,5 @@
 import argparse
-from STEP1a_table_extract import main
+from Table_Extract import main
 
 parsing = argparse.ArgumentParser()
 

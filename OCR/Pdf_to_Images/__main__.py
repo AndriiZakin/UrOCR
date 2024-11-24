@@ -1,7 +1,7 @@
 import argparse
 
-from UrOCR.OCR.util import working_dir, make_tempdir, get_logger
-from table_ocr.pdf_to_images import pdf_to_images, preprocess_img
+from OCR.util import working_dir, make_tempdir, get_logger
+from pdf_to_images import pdf_to_images, preprocess_img
 
 logger = get_logger(__name__)
 
